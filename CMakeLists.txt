@@ -12,35 +12,40 @@ if (NOT CMAKE_TOOLCHAIN_FILE)
 endif ()
 
 # EMSDK VERSION CHECK
-if (${EMSCRIPTEN_VERSION} VERSION_LESS 2.0.29)
-    message(FATAL_ERROR "EMSCRIPTEN version looks too old. Was ${EMSCRIPTEN_VERSION}, should be at least 2.0.29.")
+if (${EMSCRIPTEN_VERSION} VERSION_LESS 3.1.33)
+    message(FATAL_ERROR "EMSCRIPTEN version looks too old. Was ${EMSCRIPTEN_VERSION}, should be at least 3.1.33.")
 endif ()
 
-set(flag "-s SAFE_HEAP=1 -s FORCE_FILESYSTEM=1 -s ALLOW_MEMORY_GROWTH=1 -s STRICT=1 -s ALLOW_UNIMPLEMENTED_SYSCALLS \
-          -s ASSERTIONS=1 --post-js ${CMAKE_SOURCE_DIR}/src/JS/JavaScriptLoader.js --no-entry")
+set(flag "-sSAFE_HEAP=1 -sFORCE_FILESYSTEM=1 -sALLOW_MEMORY_GROWTH=1 -sSTRICT=1 -sALLOW_UNIMPLEMENTED_SYSCALLS=1 \
+          -sASSERTIONS=1 -sEXPORT_ES6=1 --post-js ${CMAKE_SOURCE_DIR}/src/JS/JavaScriptLoader.js --no-entry -lembind")
 
 if (WASM)
-    set(flag "-s WASM=1 ${flag}")
+    set(flag "-sWASM=1 ${flag}")
 else ()
-    set(flag "-s WASM=0 ${flag}")
+    set(flag "-sWASM=0 ${flag}")
 endif ()
 
 if (CMAKE_BUILD_TYPE STREQUAL Debug)
-    set(flag "${flag} -Wall -O0 -g3 -s LLD_REPORT_UNDEFINED --post-js ${CMAKE_SOURCE_DIR}/src/JS/StaticDebug.js --bind \
+    set(flag "${flag} -Wall -O0 -g3 --post-js ${CMAKE_SOURCE_DIR}/src/JS/StaticDebug.js \
               --preload-file vaiueo2d.wav --use-preload-plugins")
 else ()
-    set(flag "${flag} -g0 -Oz --closure 2 --bind")
+    set(flag "${flag} -g0 -Oz -flto --emit-tsd ${PROJECT_NAME}.d.ts")
+    if  (WASM)
+        set(flag "${flag} --closure 1")
+    else ()
+        set(flag "${flag} --closure 2")
+    endif ()
 endif ()
 
 add_subdirectory(lib/WorldCMake)
 
 include_directories(
-        lib/WorldCMake/src/
-        lib/WorldCMake/tools/
-        src/WorldJS/
-        src/Wav2World/Module/
-        src/Wav2World/
-        src/
+    lib/WorldCMake/src/
+    lib/WorldCMake/tools/
+    src/WorldJS/
+    src/Wav2World/Module/
+    src/Wav2World/
+    src/
 )
 
 file(GLOB sources src/*.cpp)
@@ -64,5 +69,5 @@ if (CMAKE_BUILD_TYPE STREQUAL Debug)
 
     # test
     add_executable(temp_test test/temp_test.cpp)
-    set_target_properties(temp_test PROPERTIES LINK_FLAGS "-s LLD_REPORT_UNDEFINED --bind --no-entry")
+    set_target_properties(temp_test PROPERTIES LINK_FLAGS "-s LLD_REPORT_UNDEFINED -lembind --no-entry")
 endif ()
