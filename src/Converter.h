@@ -31,8 +31,8 @@ Type *GetPtrFrom1XArray(emscripten::val arr, int *len = nullptr) {
     auto *ret = new Type[*len];
     int ptr = (int) (ret) / sizeof(Type);
 
-    emscripten::val module = emscripten::val::global("Module");
-    module["HEAPF64"].call<emscripten::val>("set", arr, emscripten::val(ptr));
+    emscripten::val HEAPF64 = emscripten::val::module_property("HEAPF64");
+    HEAPF64.call<emscripten::val>("set", arr, emscripten::val(ptr));
     return ret;
 }
 
@@ -47,14 +47,14 @@ Type **GetPtrFrom2XArray(const emscripten::val &arr, int *y_len = nullptr, int *
 
     *y_len = arr["length"].as<int>();
 
-    emscripten::val module = emscripten::val::global("Module");
+    emscripten::val HEAPF64 = emscripten::val::module_property("HEAPF64");
     if (*y_len > 0) {
         *x_len = arr[0]["length"].as<int>();
         Type **ret = new Type *[*y_len];
         for (int i = 0; i < *y_len; i++) {
             ret[i] = new Type[*x_len];
             int ptr = (int) (ret[i]) / sizeof(Type);
-            module["HEAPF64"].call<emscripten::val>("set", arr[i], emscripten::val(ptr));
+            HEAPF64.call<emscripten::val>("set", arr[i], emscripten::val(ptr));
         }
         return ret;
     } else {

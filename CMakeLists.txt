@@ -17,7 +17,11 @@ if (${EMSCRIPTEN_VERSION} VERSION_LESS 3.1.33)
 endif ()
 
 set(flag "-sSAFE_HEAP=1 -sFORCE_FILESYSTEM=1 -sALLOW_MEMORY_GROWTH=1 -sSTRICT=1 -sALLOW_UNIMPLEMENTED_SYSCALLS=1 \
-          -sASSERTIONS=1 -sEXPORT_ES6=1 --post-js ${CMAKE_SOURCE_DIR}/src/JS/JavaScriptLoader.js --no-entry -lembind")
+          -sASSERTIONS=1 -sEXPORT_ES6=1 --post-js ${CMAKE_SOURCE_DIR}/src/JS/JavaScriptLoader.js --no-entry -lembind \
+          -sEXPORTED_RUNTIME_METHODS=HEAPF64")
+
+# Build for Web Worker. If you use on Web, change this to "web"
+set(flag "${flag} -sENVIRONMENT=worker")
 
 if (WASM)
     set(flag "-sWASM=1 ${flag}")
