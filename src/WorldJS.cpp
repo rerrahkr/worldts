@@ -61,6 +61,14 @@ EMSCRIPTEN_KEEPALIVE emscripten::val WorldJS::Wav2World(const std::string &fileN
     return WorldJSWrapper::W2World(fileName);
 }
 
+EMSCRIPTEN_KEEPALIVE emscripten::val WorldJS::F0ToCent(emscripten::val f0) {
+    return WorldJSWrapper::F0ToCent(std::move(f0));
+}
+
+EMSCRIPTEN_KEEPALIVE emscripten::val WorldJS::CentToF0(emscripten::val cent) {
+    return WorldJSWrapper::CentToF0(std::move(cent));
+}
+
 //-----------------------------------------------------------------------------
 // The JavaScript API bind for C++
 //-----------------------------------------------------------------------------
@@ -78,6 +86,7 @@ EMSCRIPTEN_BINDINGS(WorldJS) {
             .class_function("Synthesis", &WorldJS::Synthesis)
             .class_function("DisplayInformationVal", &WorldJS::DisplayInformationVal)
             .class_function("GetInformationVal", &WorldJS::GetInformationVal)
-            .class_function("Wav2World", &WorldJS::Wav2World);
+            .class_function("Wav2World", &WorldJS::Wav2World)
+            .class_function("F0ToCent", &WorldJS::F0ToCent)
+            .class_function("CentToF0", &WorldJS::CentToF0);
 }
-

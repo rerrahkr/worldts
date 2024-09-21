@@ -34,7 +34,8 @@
 #include <emscripten/val.h>
 #include <emscripten/bind.h>
 
-class WorldJS {
+class WorldJS
+{
 public:
     WorldJS() = default;
 
@@ -67,6 +68,10 @@ public:
     static EMSCRIPTEN_KEEPALIVE emscripten::val GetInformationVal(const emscripten::val &x);
 
     static EMSCRIPTEN_KEEPALIVE emscripten::val Wav2World(const std::string &fileName);
+
+    static EMSCRIPTEN_KEEPALIVE emscripten::val F0ToCent(emscripten::val f0);
+
+    static EMSCRIPTEN_KEEPALIVE emscripten::val CentToF0(emscripten::val cent);
 };
 
-#endif //WORLDJS_WORLDJS_H
+#endif // WORLDJS_WORLDJS_H

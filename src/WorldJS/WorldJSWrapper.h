@@ -18,6 +18,10 @@ public:
     static EMSCRIPTEN_KEEPALIVE emscripten::val GetInformationVal(const emscripten::val &x);
 
     static EMSCRIPTEN_KEEPALIVE emscripten::val W2World(const std::string &fileName);
+
+    static EMSCRIPTEN_KEEPALIVE emscripten::val F0ToCent(emscripten::val f0);
+
+    static EMSCRIPTEN_KEEPALIVE emscripten::val CentToF0(emscripten::val cent);
 };
 
 
